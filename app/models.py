@@ -21,6 +21,7 @@ class Product(db.Model):
     date_created = db.Column(db.DateTime,nullable=False, server_default=func.now())
     product_brand = db.Column(db.Text, nullable=False)
     product_size = db.Column(db.Text, nullable=False)
+    product_desc = db.Column(db.Text, nullable=False)
 
 class Transaction(db.Model):
     __tablename__ = 'transaction_table'

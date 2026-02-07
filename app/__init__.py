@@ -3,7 +3,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from app.routes import routes
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,6 +20,9 @@ def create_app():
     db.init_app(app)
     jwt = JWTManager(app)
     CORS(app, resources={r"/*": {"origins": os.getenv('FE_URL')}})
+
+    from app.routes import routes
+    
     app.register_blueprint(routes, url_prefix="/auth")
 
     return app

@@ -3,6 +3,7 @@ from app.models import User, Product, Transaction
 
 class UserRepository:
     @staticmethod
+    #soon to be get_all_products -Angelo
     def get_all_users():
         users = User.query.all()
         return [UserRepository.extract_user_data(user) for user in users]
@@ -20,7 +21,7 @@ class UserRepository:
     def extract_user_data(user):
         return {
             'user_id': user.user_id,
-            'user_user_name': user.user_username,
+            'user_username': user.user_username,
             'user_password': user.user_password,
             'date_created': user.date_created,
         }

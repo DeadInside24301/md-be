@@ -23,7 +23,7 @@ class UserController:
         if UserRepository.get_user_by_username(user_username):
             return make_response(jsonify({'message': 'User already exists'}), 400)
         user = UserRepository.create_user(
-            user_user_name=user_username,
+            user_username=user_username,
             user_password=user_password,
         )
         if not user:
@@ -40,12 +40,13 @@ class UserController:
         user_password = data['user_password']
         
         user = UserRepository.get_user_by_username(user_username)
+
         if not user:
             return make_response(jsonify({'message': 'Account Does Not Exist'}), 404)
         if not check_password_hash(user['user_password'], user_password):
             return make_response(jsonify({'message': 'Invalid Credentials. Please Try Again'}), 401)
-        
-        access_token = create_access_token(identity=user_username)
+        else:
+            access_token = create_access_token(identity=user["user_id"],additional_claims={"user_username": user["user_username"]})
         return make_response(jsonify({
             'message': 'Login successful', 
             'access_token': access_token, 

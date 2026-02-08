@@ -20,12 +20,32 @@ def hello_world():
             'message': 'Backend Connected',
         }), 200)
 
-@routes.route("/user/products", methods=["GET"])
+@routes.route('/user/product', methods=['POST']) #C
+@jwt_required()
+def add_product():
+    return
+
+@routes.route("/user/product", methods=["GET"]) #R
 @jwt_required()
 def get_user_products():
     return
 
-@routes.route("/user/products-data",methods=["GET"])
+@routes.route("/user/product/<uuid:product_id>",methods=["PATCH"]) #U
 @jwt_required()
-def get_user_product_data():
+def update_product():
+    return
+
+@routes.route('/user/product/<uuid:product_id>', methods=['DELETE']) #D
+@jwt_required()
+def delete_product():
+    return
+
+@routes.route('/stock_transaction', methods=['POST'])
+@jwt_required()
+def stock_transaction():
+    return
+
+@routes.route('/stock_transaction/<uuid:user_id>', methods=['GET'])
+@jwt_required()
+def get_transaction():
     return

@@ -54,5 +54,5 @@ def get_transactions():
 
 @routes.route('/user/stock_transaction/barchart', methods=['GET'])
 @jwt_required()
-def get_transactions():
+def get_barchart_data():
     return TransactionController.get_barchart_data()

@@ -1,5 +1,6 @@
 from flask_jwt_extended import (
-    create_access_token, 
+    create_access_token,
+    create_refresh_token 
 )
 from app.repository import UserRepository, ProductRepository, TransactionRepository
 from flask import request, jsonify, make_response
@@ -45,30 +46,26 @@ class UserController:
             return make_response(jsonify({'message': 'Invalid Credentials. Please Try Again'}), 401)
         else:
             access_token = create_access_token(identity=user["user_id"],additional_claims={"user_username": user["user_username"]})
+            refresh_token = create_refresh_token(identity=user["user_id"],additional_claims={"user_username": user["user_username"]})
         return make_response(jsonify({
             'message': 'Login successful', 
             'access_token': access_token, 
+            'refresh_token':refresh_token
         }), 200)
 
 class ProductController:
-    @staticmethod
-    def get_items():
-        items = ProductRepository.get_items()
-        return make_response(jsonify({'Products': items}), 200)
 
     @staticmethod
-    def delete_item(product_id):
-        item_id = ProductRepository.check_item(product_id)
-        if not item_id:
-            return make_response(jsonify({'message': 'Item Not Found'}), 404)
-        item_id = ProductRepository.delete_item(product_id)
-        return make_response(jsonify({'message': 'Employee Deleted Successfully'}),200)
+    def get_items(user_id):
+        items = ProductRepository.get_items(user_id)
+        return make_response(jsonify({'Products':items}), 200)
 
     @staticmethod
-    def create_item():
+    def create_item(user_id):
         data = request.get_json()
         if not data:
             return make_response(jsonify({'message': 'No input provided'}), 400)
+
         try:
             product_type = data['product_type']
             product_quantity = data['product_quantity']
@@ -76,33 +73,38 @@ class ProductController:
             product_brand = data['product_brand']
             product_size = data['product_size']
             product_desc = data['product_desc']
-        except Exception as e:
-            return make_response(jsonify({'message': f'Error processing fields: {str(e)}'}), 400)
+        except KeyError as e:
+            return make_response(jsonify({'message': f'Missing field: {e}'}), 400)
+
         product_sku = f"{product_brand}-{product_type}-{product_size}".upper()
-        if ProductRepository.get_item_sku(product_sku):
+
+        if ProductRepository.get_item_sku(product_sku, user_id):
             return make_response(jsonify({'message': 'Product already exists'}), 400)
+
         item = ProductRepository.create_product(
-            product_type = product_type,
-            product_sku = product_sku,
-            product_quantity = product_quantity,
-            product_price = product_price,
-            product_brand =product_brand,
-            product_size = product_size,
-            product_desc = product_desc
+            user_id=user_id,
+            product_type=product_type,
+            product_sku=product_sku,
+            product_quantity=product_quantity,
+            product_price=product_price,
+            product_brand=product_brand,
+            product_size=product_size,
+            product_desc=product_desc
         )
-        if not item:
-            return make_response(jsonify({'message': 'User creation failed'}), 500)
+
         return make_response(jsonify({
-            'message': 'Product registered successfully',
-            'user': {'product': item['product_sku']}
+            'message': 'Product created successfully',
+            'product': item
         }), 201)
-    
+
     @staticmethod
-    def update_item(product_id):
+    def update_item(user_id, product_id):
         data = request.get_json()
-        item = ProductRepository.check_item_data(product_id)
+        item = ProductRepository.check_item_data(user_id, product_id)
+
         if not item:
-            return make_response(jsonify({'message': 'Item Not Found'}), 404)
+            return make_response(jsonify({'message': 'Item not found'}), 404)
+
         updated_fields = {
             'product_type': data.get('product_type', item['product_type']),
             'product_quantity': data.get('product_quantity', item['product_quantity']),
@@ -111,47 +113,59 @@ class ProductController:
             'product_size': data.get('product_size', item['product_size']),
             'product_desc': data.get('product_desc', item['product_desc']),
         }
-        updated_item = ProductRepository.update_item(product_id, updated_fields)
-        if updated_item:
-            return make_response(jsonify({'message': 'Product information updated successfully'}), 200)
-        return make_response(jsonify({'message': 'Update failed'}), 500)
+
+        ProductRepository.update_item(product_id, updated_fields)
+        return make_response(jsonify({'message': 'Product updated successfully'}), 200)
+
+    @staticmethod
+    def delete_item(user_id, product_id):
+        item = ProductRepository.check_item(user_id, product_id)
+        if not item:
+            return make_response(jsonify({'message': 'Item not found'}), 404)
+
+        ProductRepository.delete_item(product_id)
+        return make_response(jsonify({'message': 'Product deleted successfully'}), 200)
 
 
 class TransactionController:
 
     @staticmethod
-    def create_transaction():
+    def create_transaction(user_id):
         data = request.get_json()
         if not data:
             return make_response(jsonify({'message': 'No input provided'}), 400)
+
         try:
             product_id = data['product_id']
-            user_id = data['user_id']
             transaction_type = data['transaction_type']
             transaction_quantity = data['transaction_quantity']
-        except Exception as e:
-            return make_response(jsonify({'message': f'Error processing fields: {str(e)}'}), 400)
+        except KeyError as e:
+            return make_response(jsonify({'message': f'Missing field: {e}'}), 400)
+
+        product = ProductRepository.check_item(user_id, product_id)
+        if not product:
+            return make_response(jsonify({'message': 'Unauthorized product access'}), 403)
+
         transaction = TransactionRepository.create_transaction(
-            product_id =product_id,
+            product_id=product_id,
             user_id=user_id,
-            transaction_type = transaction_type,
-            transaction_quantity = transaction_quantity
+            transaction_type=transaction_type,
+            transaction_quantity=transaction_quantity
         )
-        if not transaction:
-            return make_response(jsonify({'message': 'User creation failed'}), 500)
+
         return make_response(jsonify({
-            'message': 'Product registered successfully',
-            'user': {'transaction': transaction['transaction_sku']}
+            'message': 'Transaction successful',
+            'transaction': transaction
         }), 201)
 
     @staticmethod
-    def get_transactions():
-        transaction = TransactionRepository.get_transactions()
-        return make_response(jsonify({'transactions': transaction}), 200)
-    
+    def get_transactions(user_id):
+        transactions = TransactionRepository.get_transactions(user_id)
+        return make_response(jsonify({'transactions':transactions}), 200)
+
     @staticmethod
-    def get_barchart_data():
-        rows = TransactionRepository.get_barchart_data()
+    def get_barchart_data(user_id):
+        rows = TransactionRepository.get_barchart_data(user_id)
         items = []
         in_data = []
         out_data = []

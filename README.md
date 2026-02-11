@@ -38,4 +38,6 @@ Right Click on the created Database the click restore
 
 Locate the sql file
 
-then click restore
+Then click restore
+
+Check if tables are in Schema > public > Tables 

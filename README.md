@@ -5,6 +5,7 @@ Python 3.10
 pip any version (a new pip will be installed and used in venv)
 
 Installation and Setup
+
 1.) Clone the repository using 'git clone', then navigate to the project directory using 'cd'.
 2.) Create the the venv by using this command 'python -m venv venv'
 3.) Activate venv by using 'source venv/Scripts/activate' (command may differ depending on the vs code terminal)(i use bash)

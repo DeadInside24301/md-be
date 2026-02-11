@@ -6,6 +6,7 @@ Python 3.10
 
 pip any version (a new pip will be installed and used in venv)
 
+
 Installation and Setup
 
 1.) Clone the repository using 'git clone', then navigate to the project directory using 'cd'.
@@ -22,13 +23,11 @@ Installation and Setup
 
 7.) Start the development server using 'python run.py'.
 
+
 For Database
 
-Requirements
+Requirements - PostgreSQL; pgAdmin 4
 
-PostgreSQL
-
-pgAdmin 4
 
 How to install
 

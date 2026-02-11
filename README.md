@@ -16,6 +16,6 @@ Installation and Setup
 
 5.) Configure the interpreter by using ctrl + shift + p and type interpreter, selec python interpreter and locate the python application within the projects venv folder (usually in C:\Users\[pcname]\[parent directory]\[Directory]\[project backend]\venv\Scripts\)
 
-6.) Create a '.env' file in the root directory and configure the required environment variables.
+6.) Create an '.env' file in the root directory and configure the required environment variables.
 
 7.) Start the development server using 'python run.py'.

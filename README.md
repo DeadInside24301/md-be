@@ -21,3 +21,21 @@ Installation and Setup
 6.) Create an '.env' file in the root directory and configure the required environment variables.
 
 7.) Start the development server using 'python run.py'.
+
+For Database
+
+Requirements
+
+PostgreSQL
+
+pgAdmin 4
+
+How to install
+
+Open pgAdmin and select a server then create a database
+
+Right Click on the created Database the click restore
+
+Locate the sql file
+
+then click restore

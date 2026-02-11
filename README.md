@@ -1,7 +1,9 @@
 Backend for my inventory system made from Python Flask and uses RESTFul Api's
 
-Required to Install first:
+Required to Install first
+
 Python 3.10 
+
 pip any version (a new pip will be installed and used in venv)
 
 Installation and Setup
@@ -14,7 +16,7 @@ Installation and Setup
 
 4.) Install the requirements by using 'pip install -r requirements.txt'
 
-5.) Configure the interpreter by using ctrl + shift + p and type interpreter, selec python interpreter and locate the python application within the projects venv folder (usually in C:\Users\[pcname]\[parent directory]\[Directory]\[project backend]\venv\Scripts\)
+5.) Configure the interpreter by using ctrl + shift + p and type interpreter, select python interpreter and locate the python application within the projects venv folder (usually in C:\Users\[pcname]\[parent directory]\[Directory]\[project backend]\venv\Scripts\)
 
 6.) Create an '.env' file in the root directory and configure the required environment variables.
 

@@ -81,7 +81,7 @@ class ProductRepository:
 
     @staticmethod
     def delete_item(product_id):
-        item = Product.query.get(product_id)
+        item = db.session.get(Product, product_id)
         if not item:
             return None
         db.session.delete(item)
@@ -112,7 +112,7 @@ class ProductRepository:
 
     @staticmethod
     def update_item(product_id, updated_fields):
-        item = Product.query.get(product_id)
+        item = db.session.get(Product, product_id)
         if not item:
             return None
         for field, value in updated_fields.items():
@@ -141,7 +141,7 @@ class TransactionRepository:
 
     @staticmethod
     def add_stock(product_id, quantity):
-        product = Product.query.get(product_id)
+        product = db.session.get(Product, product_id)
         if not product:
             return None
         product.product_quantity += quantity
@@ -155,7 +155,7 @@ class TransactionRepository:
 
     @staticmethod
     def subtract_stock(product_id, quantity):
-        product = Product.query.get(product_id)
+        product = db.session.get(Product, product_id)
         if not product:
             return None
         if product.product_quantity < quantity:
